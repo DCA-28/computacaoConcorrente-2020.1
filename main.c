@@ -19,7 +19,7 @@ void *incrementar(void *arg){
     Valores *valores = (Valores *) arg;
     printf("\nThread %d criada\n\n", valores->thread_id);
     for(int i = valores->valor1; i <= valores->valor2; i++){
-        printf("A thread %d esta incrementando o vetor\n", valores->thread_id);
+        printf("A thread %d esta incrementando o elemento na posicao %d do vetor\n", valores->thread_id, i);
         pt[i] = pt[i] + 1;
     }
     pthread_exit(NULL);
