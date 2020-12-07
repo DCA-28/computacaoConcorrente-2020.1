@@ -35,7 +35,7 @@ int main(void){
         if(n < 100 && n > 10)
             break;
         else
-            printf("Por favor, insira um valor no intervalo 10 < n < 100":);
+            printf("Por favor, insira um valor no intervalo 10 < n < 100:");
     }
     printf("\n");
     int vetor[n];
