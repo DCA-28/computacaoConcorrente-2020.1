@@ -92,7 +92,7 @@ int main(void){
             }
         }
     }
-    //a funcao pthread_join é usada aqui para garantir que o vetor so sera printado apos todas os incrementos terem sido efetivados
+    //a funcao pthread_join é usada aqui para garantir que o vetor so sera printado apos todos os incrementos terem sido efetivados
     for(int i = 0; i < NTHREADS; i++){
         if (pthread_join(tid[i], NULL)){
             printf("ERRO -- pthread_create\n");
