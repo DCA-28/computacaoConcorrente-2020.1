@@ -61,6 +61,9 @@ int main(void){
     if (valores == NULL) {
         printf("--ERRO: malloc()\n"); exit(-1);
     }
+    if (valores2 == NULL) {
+        printf("Erro na alocacao de memoria\n"); exit(-1);
+    }
 
     int inicio;
     int fim;
@@ -95,7 +98,7 @@ int main(void){
     //a funcao pthread_join é usada aqui para garantir que o vetor so sera printado apos todos os incrementos serem efetivados
     for(int i = 0; i < NTHREADS; i++){
         if (pthread_join(tid[i], NULL)){
-            printf("ERRO -- pthread_create\n");
+            printf("ERRO -- pthread_join\n");
         }
     }
     printf("\nTermino da thread main\n\n");
