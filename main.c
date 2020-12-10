@@ -1,112 +1,84 @@
-/*O programa segue uma logica de, uma vez escolhido o tamanho do vetor, este tera seus valores
-  inicias preenchidos de 0 ate N-1. Assim, depois que as threads agirem, os valores finais do
-  vetor irao de 1 até N*/
-
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
+#include <sys\timeb.h>
 
-#define NTHREADS 2
+int **matrixGenerator(int n);
+struct timeb start, end;
+int diff;
 
-int *pt; //ponteiro global para modificar os valores do vetor de dentro das threads
 
-typedef struct{
-    int valor1, valor2; //valor1 e valor2 indicam, respectivamente, o começo e o fim da metade que será preenchida
-    int thread_id;
-}Valores;
-
-void *incrementar(void *arg){
-    Valores *valores = (Valores *) arg;
-    printf("\nThread %d criada\n\n", valores->thread_id);
-    for(int i = valores->valor1; i <= valores->valor2; i++){
-        printf("A thread %d esta incrementando o elemento na posicao %d do vetor\n", valores->thread_id, i);
-        pt[i] = pt[i] + 1;
-    }
-    pthread_exit(NULL);
-}
-
-int main(void){
-
-    pthread_t tid[NTHREADS]; //identificador da thread no sistema
-    int n; //variavel para indicar o tamanho do vetor
-    printf("Escolha um valor para n no intervalo 10 < n < 100: ");
-    while(1){
-        scanf("%d", &n);
-        if(n < 100 && n > 10)
-            break;
-        else
-            printf("Por favor, insira um valor no intervalo 10 < n < 100:");
-    }
-    printf("\n");
-    int vetor[n];
-    for(int i = 0; i < n; i++){
-        vetor[i] = i;
-    }
-    printf("Valores iniciais do vetor:\n");
-    for(int i = 0; i < n; i++){
-        printf("%d ", vetor[i]);
-    }
-    printf("\n");
-    printf("\n");
-
-    //ponteiro para struct Valores, assim sao passados argumentos por referencia às threads, importante passar por referencia para ocorrer
-    //a modificacao dos valores do vetor
-    Valores *valores;
-    Valores *valores2;
-
-    valores = malloc(sizeof(Valores));
-    valores2 = malloc(sizeof(Valores));
-    //fazendo o ponteiro global apontar para o vetor
-    pt = vetor;
-    if (valores == NULL) {
-        printf("--ERRO: malloc()\n"); exit(-1);
-    }
-    if (valores2 == NULL) {
-        printf("Erro na alocacao de memoria\n"); exit(-1);
-    }
-
-    int inicio;
-    int fim;
-    int metade = n / 2;
-
-    printf("Criando as threads que irao incrementar os valores no vetor.\n\n");
-    //na primeira iteracao é criada a thread responsavel pela primeira metade, na segunda é criada a
-    //thread responsavel pela segunda metade, apos isso o sistema operacional irá escolher a ordem em
-    //que as thredas sao escalonadas
-    for(int i = 0; i <NTHREADS; i++){
-        if(i == 0){
-            inicio = 0;
-            fim = metade;
-            valores->valor1 = inicio;
-            valores->valor2 = fim;
-            valores->thread_id = i + 1;
-            if (pthread_create(&tid[0], NULL, incrementar, (void *) valores)){
-                printf("ERRO -- pthread_create\n");
-            }
+int main() {
+    int n; //inteiro que indica a ordem da matrix quadrada
+    printf("Digite o numero da ordem da matrix: ");
+    scanf("%d", &n);
+    int *matrix[n]; //vetor de ponteiro para inteiros, onde cada ponteiro irá apontar para uma linha da matrix
+    int *matrix2[n];
+    void *linha;
+    void *linha2;
+    //aqui geramos as "linhas" da matrix, ou seja, os endereços para os quais cada ponteiro do vetor matrix ira apontar
+    //cada endereço corresponde a 'n' espaços de inteiro, sendo então uma linha(vetor) da matrix
+    ftime(&start);
+    for (int i = 0; i < n; i++) {
+        linha = (int *) malloc(sizeof(int) * n);
+        linha2 = (int *) malloc(sizeof(int) * n);
+        if(linha == NULL || linha2 == NULL){
+            printf("Nao foi possivel gerar a matriz.");
+            exit(-1);
         }
-        else{
-            inicio = metade + 1;
-            fim = n - 1;
-            valores2->valor1 = inicio;
-            valores2->valor2 = fim;
-            valores2->thread_id = 2;
-            if (pthread_create(&tid[1], NULL, incrementar, (void *) valores2)){
-                printf("ERRO -- pthread_create\n");
-            }
+        matrix[i] = linha;
+        matrix2[i] = linha2;
+    }
+    printf("Gerando as matrizes...\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            matrix[i][j] = (i + j);
+            matrix2[i][j] = (2 * (i +j));
         }
     }
-    //a funcao pthread_join é usada aqui para garantir que o vetor so sera printado apos todos os incrementos serem efetivados
-    for(int i = 0; i < NTHREADS; i++){
-        if (pthread_join(tid[i], NULL)){
-            printf("ERRO -- pthread_join\n");
+    ftime(&end);
+    diff = (int) (1000.0 * (end.time - start.time) + (end.millitm - start.millitm));
+    /*printf("Elementos da matriz 1:\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%d ", matrix[i][j]);
         }
+        printf("\n");
     }
-    printf("\nTermino da thread main\n\n");
-    free(valores);
-    free(valores2);
-    printf("Valores finais no vetor:\n");
-    for(int i = 0; i < n; i++){
-        printf("%d ", vetor[i]);
-    }
+    printf("Elementos da matriz 2:\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%d ", matrix2[i][j]);
+        }
+        printf("\n");
+    }*/
+    printf("Tempo de excucao da criacao de matrizes em milisegundos: %u", diff);
     return 0;
 }
+
+int **matrixGenerator(int n) {
+    int *matrix3[n]; //vetor de ponteiro para inteiros, onde cada ponteiro irá apontar para uma linha da matrix
+    void *posicao;
+    //aqui geramos as "linhas" da matrix, ou seja, os endereços para os quais cada ponteiro do vetor matrix ira apontar
+    //cada endereço corresponde a 'n' espaços de inteiro, sendo então uma linha(vetor) da matrix
+    for (int i = 0; i < n; i++) {
+        posicao = (int *) malloc(sizeof(int) * n);
+        matrix3[i] = posicao;
+    }
+    printf("Gerando a matriz...\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            matrix3[i][j] = (i + j);
+        }
+    }
+    printf("Elementos da matriz:\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%d ", matrix3[i][j]);
+        }
+        printf("\n");
+    }
+    return matrix3;
+}
+
+
+
