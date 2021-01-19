@@ -6,7 +6,7 @@
 float *mat;
 float *mat2;
 float *matsaida;
-int nthreads; //numero de threads
+int nthreads; // numero de threads
 
 typedef struct{
     int id;
