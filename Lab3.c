@@ -48,21 +48,7 @@ int main(int argc, char *args[]) {
     printf("Valor aproximado pela funcao sequencial: %.15lf\n", somaSeq);
     printf("\nValor exato de pi: %.15lf\n", M_PI);
 
-    /*printf("\nVetor original de elementos do somatorio:\n");
-    for(long int i = 0; i<elementos; i++){
-        printf("%.15lf ", vetor[i]);
-    }
     printf("\n");
-
-    qsort(vetor, elementos, sizeof(double), comparador);
-
-    printf("Vetor ordenado de elementos do somatorio:\n");
-    for(long int i = 0; i<elementos; i++){
-        printf("%.15lf ", vetor[i]);
-    }*/
-    printf("\n");
-
-    //ate aqui tudo certo
 
     // ---Soma concorrente---
     GET_TIME(inicio);
@@ -101,12 +87,6 @@ int main(int argc, char *args[]) {
 //mensagem de erro da inicializacao do programa
 void mensagem(char *arg){
     fprintf(stderr, "Digite: %s <numero de elementos da serie> <numero de threads>", arg);
-}
-// funcao de comparacao para ordenar os valores do somatorio no vetor
-static int comparador (const void * a, const void * b){
-    if (*(double*)a > *(double*)b) return 1;
-    else if (*(double*)a < *(double*)b) return -1;
-    else return 0;
 }
 
 //funcao executada por cada thread
@@ -161,7 +141,7 @@ double somaSequencial(long long int n){
         resultadoInvertido += vetor[i];
     }
     if(fabs(M_PI - resultadoInvertido) < fabs(M_PI - resultado)){
-        printf("O valor da soma invertida é mais exato\n");
+        printf("O valor da soma invertida é mais exato\n\n");
     }
     printf("Valor aproximado pela funcao invertida: %.15lf\n", resultadoInvertido);
 
